@@ -1,4 +1,4 @@
-package _12_Nationalities;
+package RestAssureAPI_Testing;
 
 import com.github.javafaker.Faker;
 import io.restassured.builder.RequestSpecBuilder;
@@ -15,7 +15,7 @@ import static io.restassured.RestAssured.*;
 
 import static org.hamcrest.Matchers.*;
 
-public class AddNationalityTest {
+public class _US12_NationalityTest {
 Faker faker=new Faker();
     String nationalityID;
 
