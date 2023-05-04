@@ -21,6 +21,7 @@ public class _US11_DiscountTest {
     String discountCode;
     String discountId;
 
+
     RequestSpecification recSpec;
 
     @BeforeClass
@@ -84,6 +85,59 @@ public class _US11_DiscountTest {
     System.out.println("discountID= "+ discountId);
 
         
+}
+@Test (dependsOnMethods = "createDiscount")
+    public void createDiscountNegative(){
+     Map<String,String> discount =new HashMap<>();
+
+    discount.put("active","true");
+    discount.put("description", discountDesc);
+    discount.put("code", discountCode);
+    discount.put("priority","5");
+
+
+    given()
+             .spec(recSpec)
+             .body(discount)
+             .log().body()
+
+             .when()
+             .post("/school-service/api/discounts")
+
+             .then()
+             .log().body()
+             .statusCode(400)
+             .body("message", containsString("already"))
+
+             ;
+
+}
+@Test(dependsOnMethods = "createDiscountNegative")
+    public void updateDiscount (){
+
+    Map<String,String>discount=new HashMap<>();
+
+    discount.put("id", discountId);
+    discountDesc="Teni isim3="+faker.name().lastName();
+    discount.put("description", discountDesc);
+    discount.put("code", discountCode);
+    discount.put("priority","5");
+    discount.put("active","true");
+
+        given()
+                .spec(recSpec)
+                .body(discount)
+
+                .when()
+                .put("/school-service/api/discounts")
+
+                .then()
+                .log().body()
+                .statusCode(200)
+                .body("description", equalTo(discountDesc))
+                ;
+
+    System.out.println("Discount name "+discountDesc);
 }
 
 
