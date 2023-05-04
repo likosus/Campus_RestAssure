@@ -16,9 +16,8 @@ import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
 public class _US12_NationalityTest {
-Faker faker=new Faker();
+    Faker faker=new Faker();
     String nationalityID;
-
     String nationName;
     RequestSpecification recSpec;
 
