@@ -1,4 +1,4 @@
-/*package RestAssureAPI_Testing;
+package RestAssureAPI_Testing;
 
 import com.github.javafaker.Faker;
 import io.restassured.builder.RequestSpecBuilder;
@@ -55,6 +55,7 @@ public class _US07_SchoolLocationTest {
    public void createSchoolLocation()  {
 
         System.out.println("baseURI = " + baseURI);
+
         Map<String,String> schoolLocation=new HashMap<>();
 
         schoolLocName=faker.address().streetName()+" "+faker.number().digits(5);
@@ -63,8 +64,8 @@ public class _US07_SchoolLocationTest {
         schoolLocation.put("active", "true");
         schoolLocation.put("capacity", schoolCap);
         schoolLocation.put("name", schoolLocName);
-        schoolLocation.put("school", "Arsenal ");
-        schoolLocation.put("shortname",faker.number().digit());
+        schoolLocation.put("school", "6390f3207a3bcb6a7ac977f9");
+        schoolLocation.put("shortName",faker.number().digit());
         schoolLocation.put("type", "CLASS");
 
 
@@ -103,4 +104,3 @@ public class _US07_SchoolLocationTest {
 
 
 }
-*/
