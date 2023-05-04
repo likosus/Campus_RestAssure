@@ -11,9 +11,8 @@ import org.testng.annotations.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.restassured.RestAssured.baseURI;
-import static io.restassured.RestAssured.given;
-
+import static io.restassured.RestAssured.*;
+import static org.hamcrest.Matchers.*;
 public class _US07_SchoolLocationTest {
 
     Faker faker=new Faker();
@@ -21,6 +20,7 @@ public class _US07_SchoolLocationTest {
 
     String schoolCap;
     String schoolLocName;
+    String shortName;
     RequestSpecification recSpec;
     @BeforeClass
     public void Setup()  {
@@ -60,12 +60,12 @@ public class _US07_SchoolLocationTest {
 
         schoolLocName=faker.address().streetName()+" "+faker.number().digits(5);
         schoolCap=faker.number().digits(2);
-
+        shortName=faker.number().digit();
         schoolLocation.put("active", "true");
         schoolLocation.put("capacity", schoolCap);
         schoolLocation.put("name", schoolLocName);
         schoolLocation.put("school", "6390f3207a3bcb6a7ac977f9");
-        schoolLocation.put("shortName",faker.number().digit());
+        schoolLocation.put("shortName",shortName);
         schoolLocation.put("type", "CLASS");
 
 
@@ -85,6 +85,101 @@ public class _US07_SchoolLocationTest {
         ;
 
         System.out.println("schoolLocId= "+schoolId);
+
+    }
+    @Test(dependsOnMethods = "createSchoolLocation")
+    public void createSchoolLocationNegative(){
+
+
+        Map<String,String> schoolLocation=new HashMap<>();
+
+        schoolLocation.put("active", "true");
+        schoolLocation.put("capacity", schoolCap);
+        schoolLocation.put("name", schoolLocName);
+        schoolLocation.put("school", "6390f3207a3bcb6a7ac977f9");
+        schoolLocation.put("shortName",shortName);
+        schoolLocation.put("type", "CLASS");
+
+        given()
+                .spec(recSpec)
+                .body(schoolLocation)
+                .log().body()
+
+                .when()
+                .post("/school-service/api/location")
+
+                .then()
+                .log().body()
+                .statusCode(400)
+                .body("message", containsString("already"))
+                ;
+
+    }
+
+@Test(dependsOnMethods = "createSchoolLocationNegative")
+    public void updateSchoolLocation(){
+
+        Map<String,String>schoolLocation=new HashMap<>();
+
+        schoolLocation.put("id", schoolId);
+        schoolLocName="new school name"+faker.address().streetName()+" "+faker.number().digits(4);
+
+    schoolLocation.put("active", "true");
+    schoolLocation.put("capacity", schoolCap);
+    schoolLocation.put("name", schoolLocName);
+    schoolLocation.put("school", "6390f3207a3bcb6a7ac977f9");
+    schoolLocation.put("shortName",shortName);
+    schoolLocation.put("type", "CLASS");
+
+    given()
+            .spec(recSpec)
+            .body(schoolLocation)
+
+            .when()
+            .put("/school-service/api/location")
+
+            .then()
+            .log().body()
+            .statusCode(200)
+            .body("name",equalTo(schoolLocName));
+
+    System.out.println(schoolLocName);
+}
+
+@Test (dependsOnMethods = "updateSchoolLocation")
+    public void deleteSchoolLoc(){
+
+        given()
+                .spec(recSpec)
+                .pathParam("schoolId",schoolId)
+                .log().uri()
+
+                .when()
+                .delete("/school-service/api/location/{schoolId}")
+
+                .then()
+                .log().body()
+                .statusCode(200)
+                ;
+
+}
+    @Test(dependsOnMethods = "deleteSchoolLoc")
+    public void deleteSchoolLocDelete(){
+
+        given()
+                .spec(recSpec)
+                .pathParam("schoolId", schoolId)
+                .log().uri()
+
+                .when()
+                .delete("/school-service/api/location/{schoolId}")
+
+                .then()
+                .log().body()
+                .body("message", equalTo("School Location not found"));
+
+
+
 
 
 

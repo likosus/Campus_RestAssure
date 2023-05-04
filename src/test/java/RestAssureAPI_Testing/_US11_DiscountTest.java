@@ -140,5 +140,48 @@ public class _US11_DiscountTest {
     System.out.println("Discount name "+discountDesc);
 }
 
+@Test(dependsOnMethods = "updateDiscount")
+    public void deleteDiscount(){
+
+        given()
+                .spec(recSpec)
+                .pathParam("discountId",discountId)
+                .log().uri()
+
+                .when()
+                .delete("/school-service/api/discounts/{discountId}")
+
+                .then()
+                .log().body()
+                .statusCode(200)
+                ;
+
+}
+
+@Test (dependsOnMethods = "deleteDiscount")
+    public void deleteDiscountNegative(){
+
+        given()
+
+                .spec(recSpec)
+                .pathParam("discountId",discountId)
+                .log().uri()
+
+                .when()
+                .delete("/school-service/api/discounts/{discountId}")
+
+                .then()
+                .log().body()
+                .body("message",equalTo("Discount not found"))
+                ;
+
+
+
+
+
+
+
+}
+
 
 }
