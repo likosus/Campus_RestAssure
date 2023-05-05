@@ -109,8 +109,8 @@ public class _US12_NationalityTest {
         Map<String,String>nation=new HashMap<>();
 
         nation.put("id", nationalityID);
-
         nationName="Yeni ulus3= "+faker.nation().nationality();
+
         nation.put("name",nationName);
 
         given()
