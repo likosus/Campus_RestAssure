@@ -14,7 +14,7 @@ import java.util.Map;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
-public class _US02_Attestation {
+public class _US02_AttestationTest {
 
     Faker faker= new Faker();
 

@@ -14,7 +14,7 @@ import java.util.Map;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
-public class _US08_Department {
+public class _US08_DepartmentTest {
 
     Faker faker= new Faker();
 
@@ -57,6 +57,7 @@ public class _US08_Department {
 
     @Test
     public void createDepartment(){
+
         departmentName = faker.currency().name();
         department.put("name",departmentName);
         department.put("code",faker.currency().code());
