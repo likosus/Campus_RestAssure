@@ -102,12 +102,10 @@ String postionCatId;
                    .body("message", containsString("already"))
                    ;
 
-       }
+     }
 
-       @Test(dependsOnMethods = "createPositionTypeNegative")
-    public void updatePositionType(){
-
-
+     @Test(dependsOnMethods = "createPositionTypeNegative")
+     public void updatePositionType(){
 
            Map<String, String> positionType = new HashMap<>();
 
