@@ -152,7 +152,7 @@ public class _US08_DepartmentTest {
                 .then()
                 .log().body()
                 .statusCode(204)//burası normalde 400 ama BUG var ondan kaynaklıı pass geçsin diye 204
-        // .body("message",equalTo("Can't find School Department"))
+              // .body("message",equalTo("Department not  found"))
         ;
     }
 
