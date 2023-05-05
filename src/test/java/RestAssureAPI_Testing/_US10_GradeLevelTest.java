@@ -9,62 +9,87 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import static io.restassured.RestAssured.baseURI;
-import static io.restassured.RestAssured.given;
-
+import static io.restassured.RestAssured.*;
+import static org.hamcrest.Matchers.*;
 
 
 public class _US10_GradeLevelTest {
 
-    Faker faker=new Faker();
+
     String gradeLevelId;
-    String gradename;
-    String[] schoolId={"6390f3207a3bcb6a7ac977f9"};
+    String name;
+    String sName;
+    String[] schoolId = {"6390f3207a3bcb6a7ac977f9"};
     RequestSpecification recSpec;
+    Map<String, Object> gradeLevel = new HashMap<>();
+    Faker faker = new Faker();
+
     @BeforeClass
-    public void Setup()  {
-        baseURI="https://test.mersys.io";
+    public void Login() {
+        baseURI = "https://test.mersys.io";
+        Map<String, String> user = new HashMap<>(); //user=userCredential
+        user.put("username", "turkeyts");
+        user.put("password", "TechnoStudy123");
+        user.put("rememberMe", "true");
 
-        Map<String,String> userCredential=new HashMap<>();
-        userCredential.put("username","turkeyts");
-        userCredential.put("password","TechnoStudy123");
-        userCredential.put("rememberMe","true");
-
-        Cookies cookies=
+        Cookies cookies =
                 given()
                         .contentType(ContentType.JSON)
-                        .body(userCredential)
+                        .body(user)
 
                         .when()
                         .post("/auth/login")
 
                         .then()
-                        //.log().all()
                         .statusCode(200)
-                        .extract().response().getDetailedCookies()
-                ;
+                        .extract().response().getDetailedCookies();
 
-        recSpec= new RequestSpecBuilder()
+        recSpec = new RequestSpecBuilder()
                 .setContentType(ContentType.JSON)
                 .addCookies(cookies)
                 .build();
     }
 
     @Test
-    public void createGradeLevel(){
-        Map<String,Object> gradeLevel=new HashMap<>();
-
-        gradename="mustafa";
-        gradeLevel.put("name",gradename);
-        gradeLevel.put("schoolId",schoolId);
+    public void createGradeLevel() {
+        name = faker.name().name();
+        sName = faker.name().lastName();
+        gradeLevel.put("name", name);
+        gradeLevel.put("shortName", sName);
+        gradeLevel.put("schoolId", schoolId);
         gradeLevel.put("order", "2");
 
+        gradeLevelId =
+                given()
+                        .spec(recSpec)
+                        .body(gradeLevel)
+                        .log().body()
 
-gradeLevelId=
+                        .when()
+                        .post("/school-service/api/grade-levels")
+
+                        .then()
+                        .log().body()
+                        .statusCode(201)
+                        .extract().path("id")
+
+        ;
+
+        System.out.println(gradeLevelId);
+
+    }
+
+    @Test(dependsOnMethods = "createGradeLevel")
+    public void createGradeLevelNegative() {
+
+        gradeLevel.put("name", name);
+        gradeLevel.put("shortName", sName);
+        gradeLevel.put("schoolId", schoolId);
+        gradeLevel.put("order", "2");
+
         given()
+
                 .spec(recSpec)
                 .body(gradeLevel)
                 .log().body()
@@ -74,14 +99,39 @@ gradeLevelId=
 
                 .then()
                 .log().body()
-                .statusCode(201)
-                .extract().path("id")
-
-;
-
-
-        System.out.println(gradeLevelId);
+                .statusCode(400)
+                .body("message", containsString("already"));
 
     }
-
 }
+/*
+  @Test(dependsOnMethods = "createGradeLevelNegative")
+    public void updateGradeLevel(){
+        name="Cemalettin61";
+
+      gradeLevel.put("id", gradeLevelId);
+      gradeLevel.put("name",name);
+      gradeLevel.put("shortName", sName);
+      gradeLevel.put("schoolId", schoolId);
+      gradeLevel.put("order", "2");
+
+
+      given()
+              .spec(recSpec)
+              .body(gradeLevel)
+
+              .when()
+              .put("/school-service/api/nationality")
+
+              .then()
+              .log().body()
+              .statusCode(200)
+              .body("name", equalTo(gradeLevel))
+
+      ;
+      System.out.println(gradeLevel);
+  }
+    }
+
+
+*/
