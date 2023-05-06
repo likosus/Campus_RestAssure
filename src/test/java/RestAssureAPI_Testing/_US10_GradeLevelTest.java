@@ -10,6 +10,7 @@ import org.testng.annotations.Test;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
@@ -17,7 +18,7 @@ import static org.hamcrest.Matchers.*;
 public class _US10_GradeLevelTest {
 
 
-    String gradeLevelId;
+    String gradelLevelId;
     String name;
     String sName;
     String[] schoolId = {"6390f3207a3bcb6a7ac977f9"};
@@ -58,9 +59,9 @@ public class _US10_GradeLevelTest {
         gradeLevel.put("name", name);
         gradeLevel.put("shortName", sName);
         gradeLevel.put("schoolId", schoolId);
-        gradeLevel.put("order", "2");
+        gradeLevel.put("order", "1");
 
-        gradeLevelId =
+        gradelLevelId =
                 given()
                         .spec(recSpec)
                         .body(gradeLevel)
@@ -76,7 +77,7 @@ public class _US10_GradeLevelTest {
 
         ;
 
-        System.out.println(gradeLevelId);
+        System.out.println(gradelLevelId);
 
     }
 
@@ -86,7 +87,7 @@ public class _US10_GradeLevelTest {
         gradeLevel.put("name", name);
         gradeLevel.put("shortName", sName);
         gradeLevel.put("schoolId", schoolId);
-        gradeLevel.put("order", "2");
+        gradeLevel.put("order", "1");
 
         given()
 
@@ -103,35 +104,73 @@ public class _US10_GradeLevelTest {
                 .body("message", containsString("already"));
 
     }
-}
-/*
-  @Test(dependsOnMethods = "createGradeLevelNegative")
-    public void updateGradeLevel(){
-        name="Cemalettin61";
 
-      gradeLevel.put("id", gradeLevelId);
-      gradeLevel.put("name",name);
-      gradeLevel.put("shortName", sName);
-      gradeLevel.put("schoolId", schoolId);
-      gradeLevel.put("order", "2");
+    @Test(dependsOnMethods = "createGradeLevelNegative")
+    public void updateGradeLevel() {
+        name = faker.name().name();
+
+        gradeLevel.put("id", gradelLevelId);
+        gradeLevel.put("name", name);
+        gradeLevel.put("shortName", sName);
+        gradeLevel.put("schoolId", schoolId);
+        gradeLevel.put("order", "1");
 
 
-      given()
-              .spec(recSpec)
-              .body(gradeLevel)
+        given()
+                .spec(recSpec)
+                .body(gradeLevel)
 
-              .when()
-              .put("/school-service/api/nationality")
+                .when()
+                .put("/school-service/api/grade-levels")
 
-              .then()
-              .log().body()
-              .statusCode(200)
-              .body("name", equalTo(gradeLevel))
+                .then()
+                .log().body()
+                .statusCode(200)
+                .body("name", equalTo(name))
 
-      ;
-      System.out.println(gradeLevel);
-  }
+        ;
+        System.out.println(gradeLevel);
     }
 
+    @Test(dependsOnMethods = "updateGradeLevel")
+    public void deleteGradelLevel() {
 
-*/
+        given()
+
+                .spec(recSpec)
+                .pathParam("gradelLevelId", gradelLevelId)
+
+                .when()
+                .delete("/school-service/api/grade-levels/{gradelLevelId}")
+
+                .then()
+                .log().body()
+                .statusCode(200)
+
+
+                ;
+
+    }
+
+    @Test(dependsOnMethods = "deleteGradelLevel")
+    public void deleteGradelLevelNegative(){
+
+        given()
+                .spec(recSpec)
+                .pathParam("gradelLevelId", gradelLevelId)
+                .log().uri()
+
+                .when()
+                .delete("/school-service/api/grade-levels/{gradelLevelId}")
+
+                .then()
+                .log().body()
+                .body("message", equalTo("Grade Level not found."))
+
+                ;
+
+    }
+}
+
+
+
